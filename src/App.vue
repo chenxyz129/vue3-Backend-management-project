@@ -1,9 +1,21 @@
 <script setup lang="ts">
 import { RouterLink, RouterView } from 'vue-router'
+import request from './utils/request';
+import { onMounted } from 'vue';
+
+import { reqLogin } from "@/api/user"
+onMounted(() => {
+  reqLogin({username:"admin",password:"111111"})
+
+})
+
 </script>
 
 <template>
   <RouterView />
+  <El-button type="primary" icon="Plus">123</El-button>
+  <SvgIcon name="lock"></SvgIcon>
+  <SvgIcon name="home"></SvgIcon>
 </template>
 
 <style scoped>
