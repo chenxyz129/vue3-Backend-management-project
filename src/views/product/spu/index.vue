@@ -3,8 +3,9 @@
 </script>
 
 <template>
-    <div>home</div>
-    
+    <div>spu</div>
 </template>
 
-<style scoped></style>
+<style scoped>
+
+</style>

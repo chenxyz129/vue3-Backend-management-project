@@ -3,8 +3,9 @@
 </script>
 
 <template>
-    <div>home</div>
-    
+    <div>user</div>
 </template>
 
-<style scoped></style>
+<style scoped>
+
+</style>

@@ -3,8 +3,9 @@
 </script>
 
 <template>
-    <div>home</div>
-    
+    <div>trademark</div>
 </template>
 
-<style scoped></style>
+<style scoped>
+
+</style>
