@@ -1,13 +1,13 @@
 import { fileURLToPath, URL } from "node:url";
 import { createSvgIconsPlugin } from "vite-plugin-svg-icons";
 import path from "path";
-import { defineConfig } from "vite";
 import vue from "@vitejs/plugin-vue";
-import { viteMockServe } from 'vite-plugin-mock'
-import { UserConfigExport, ConfigEnv } from 'vite'
+import { viteMockServe } from "vite-plugin-mock";
+import { UserConfigExport, ConfigEnv, loadEnv } from "vite";
 
 // https://vitejs.dev/config/
-export default ({ command }: ConfigEnv):UserConfigExport =>{
+export default ({ command, mode }: ConfigEnv): UserConfigExport => {
+  let env = loadEnv(mode, process.cwd());
   return {
     plugins: [
       vue(),
@@ -18,11 +18,20 @@ export default ({ command }: ConfigEnv):UserConfigExport =>{
         symbolId: "icon-[dir]-[name]",
       }),
       viteMockServe({
-        mockPath: './src/mock',
+        mockPath: "./src/mock",
         // 根据项目配置。可以配置在.env文件
-        enable: true,
+        enable: false,
       }),
     ],
+    server: {
+      proxy:{
+        [env.VITE_APP_BASE_API]:{
+          target:env.VITE_SERVE,
+          changeOrigin:true,
+          rewrite: (path) => path.replace(/^\/api/, '')
+        }
+      }
+    },
     resolve: {
       alias: {
         "@": fileURLToPath(new URL("./src", import.meta.url)),
@@ -36,5 +45,5 @@ export default ({ command }: ConfigEnv):UserConfigExport =>{
         },
       },
     },
-  }
+  };
 };

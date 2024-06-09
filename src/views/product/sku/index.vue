@@ -3,7 +3,7 @@
 </script>
 
 <template>
-    <div>sku</div>
+    sku
 </template>
 
 <style scoped>

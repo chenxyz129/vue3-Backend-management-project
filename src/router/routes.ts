@@ -13,6 +13,7 @@ const routes = [
     meta: {
       title: "首页",
       icon: "House",
+      hideBreadcrumb: true,
     },
     children: [
       {
@@ -22,8 +23,8 @@ const routes = [
         meta: {
           title: "首页",
           icon: "House",
+          hideBreadcrumb: true,
         },
-        
       },
     ],
   },

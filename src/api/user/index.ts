@@ -1,12 +1,12 @@
 import request from "@/utils/request";
-import type { loginForm, loginResponseData, userResponseData } from "./types";
+import type {loginFormData ,loginResponData,InfoResponData} from "./types";
 enum API {
-  LOGIN_URL = "/user/login",
-  USERINFO_URL = "/user/info",
+  LOGIN_URL = "/admin/acl/index/login",
+  USERINFO_URL = "/admin/acl/index/info",
+  LOGOUT_URL = "/admin/acl/index/logout",
 }
-export const reqLogin = (data: loginForm) => {
-  return request.post<any, loginResponseData>(API.LOGIN_URL, data);
-};
-export const reqUserInfo = (data: any) => {
-  return request.get<any, userResponseData>(API.USERINFO_URL, data);
-};
+const reqLogin = (data: loginFormData) => request.post<any, loginResponData>(API.LOGIN_URL, data);
+const reqUserInfo = () => request.get<any, InfoResponData>(API.USERINFO_URL);
+const reqLogout = () => request.post<any, any>(API.LOGOUT_URL);
+
+export { reqLogin, reqUserInfo, reqLogout };

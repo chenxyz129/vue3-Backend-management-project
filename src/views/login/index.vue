@@ -4,6 +4,8 @@ import useUserStore from '@/stores/useUserStore';
 import type { loginForm } from '@/api/user/types';
 import { ElNotification } from 'element-plus';
 import router from '@/router';
+import { useRoute } from 'vue-router';
+const route = useRoute()
 let login_form = reactive({ username: "admin", password: "111111" })
 let RefForm = ref()
 let Is_show_password = ref(true)
@@ -19,7 +21,9 @@ const login = async (login_form: loginForm) => {
             message: '登录成功，' + getTime() + '好！',
             type: 'success',
         })
-        router.push({ path: '/' })
+
+        const redirect: any = route.query.redirect
+        router.push({ path: redirect || '/home' })
         Is_btn_loading.value = false
     }).catch(() => {
         ElNotification({
@@ -47,8 +51,7 @@ let getTime = () => {
     return time
 }
 const validatorPasswd = (rule: any, value: any, callback: any) => {
-        // console.log(value);
-        
+
 
     if (value.length >= 6 && value.length <= 18) {
         callback()
@@ -61,7 +64,7 @@ let login_form_rules = {
         { required: true, min: 3, max: 6, message: '用户名长度必须在3至6位之间！', trigger: 'change' },
     ],
     password: [{
-        trigger: 'change', validator: validatorPasswd,message:'密码长度必须在6至18位之间！'
+        trigger: 'change', validator: validatorPasswd, message: '密码长度必须在6至18位之间！'
     },]
 }
 </script>
