@@ -1,17 +1,22 @@
 <script setup lang="ts">
-import { ref, watch } from 'vue';
+import { ref, watch, onMounted } from 'vue';
 import { useCategoryStore } from "@/stores/useCategoryStore"
-import { reqGetProduct } from "@/api/product/spu/index"
+import { reqGetProduct, reqDeleteSpu } from "@/api/product/spu/index"
+import { reqGetSpuInfoById } from "@/api/product/sku/index"
 import type { resData } from "@/api/product/spu/type"
 import spuForm from './spuForm.vue';
 import skuForm from './skuForm.vue';
-const scene = ref(2)
+import { ElMessage } from 'element-plus';
+const scene = ref(0)
 const CategoryStore = useCategoryStore()
 const currentPage = ref(1)
 const pageSize = ref(3)
 const total = ref(0)
 const SPUFormList = ref()
 const spuformRef = ref()
+const skuFormRef = ref()
+const isShowDialog = ref(false)
+const skuInfoList = ref()
 watch(() => CategoryStore.C3Id, () => {
     if (CategoryStore.C3Id) {
         getSPUList()
@@ -51,13 +56,32 @@ const addSPU = () => {
         spuImageList: [],
         spuPosterList: []
     }
-    spuformRef.value.imgFileList=[]
+    spuformRef.value.imgFileList = []
     spuformRef.value.spuInfo.category3Id = CategoryStore.C3Id
 
     spuformRef.value.getTradeMarkList(CategoryStore.C3Id)
 }
-const sddSku=()=>{
+const addSku = (row: any) => {
     Scene(2)
+    console.log(row);
+    skuFormRef.value.getSku(row.id)
+
+}
+const showSkuInfo = async (row: any) => {
+    const result = await reqGetSpuInfoById(row.id)
+    skuInfoList.value = result.data
+    console.log(result);
+    isShowDialog.value = true
+
+}
+const deleteSpu = async (row: any) => {
+    const result: any = await reqDeleteSpu(row.id)
+    if (result.code == 200) {
+        getSPUList()
+        ElMessage.success('删除成功！')
+    } else {
+        ElMessage.error('删除失败！')
+    }
 }
 const updateSPU = (row: any) => {
     Scene(1)
@@ -65,7 +89,6 @@ const updateSPU = (row: any) => {
     spuformRef.value.getTradeMarkList(CategoryStore.C3Id)
     console.log(row.id);
 }
-
 </script>
 
 <template>
@@ -81,11 +104,16 @@ const updateSPU = (row: any) => {
             <el-table-column label="SPU描述" prop="description"></el-table-column>
             <el-table-column label="SPU操作">
                 <template #="{ row, column, $index }">
-                    <el-button type="primary" size="small" icon="Plus" title="添加SKU" @click="sddSku"></el-button>
+                    <el-button type="primary" size="small" icon="Plus" title="添加SKU" @click="addSku(row)"></el-button>
                     <el-button type="primary" size="small" icon="Edit" title="修改SPU"
                         @click="updateSPU(row)"></el-button>
-                    <el-button type="primary" size="small" icon="View" title="查看SPU列表"></el-button>
-                    <el-button type="primary" size="small" icon="Delete" title="删除SPU"></el-button>
+                    <el-button type="primary" size="small" icon="View" title="查看SPU列表"
+                        @click="showSkuInfo(row)"></el-button>
+                    <el-popconfirm title="确认删除吗？" @confirm="deleteSpu(row)">
+                        <template #reference>
+                            <el-button type="primary" size="small" icon="Delete" title="删除SPU"></el-button>
+                        </template>
+                    </el-popconfirm>
                 </template>
             </el-table-column>
         </el-table>
@@ -93,7 +121,17 @@ const updateSPU = (row: any) => {
             background layout=" prev, pager, next, jumper,->,sizes,total " :total="total" />
     </el-card>
     <spuForm v-show="scene == 1" @changeScene="Scene" @getSPUList="getSPUList" ref="spuformRef"></spuForm>
-    <skuForm v-show="scene == 2"></skuForm>
+    <skuForm v-show="scene == 2" ref="skuFormRef" @changeSence="Scene(0)"></skuForm>
+    <el-dialog v-model="isShowDialog" title="SKU列表">
+        <el-table border :data="skuInfoList">
+            <el-table-column label="SKU名称" prop="skuName"></el-table-column>
+            <el-table-column label="价格" prop="price"></el-table-column>
+            <el-table-column label="重量" prop="weight"></el-table-column>
+            <el-table-column label="图片">
+                <template #="{ row, $index }"><img :src="row.skuDefaultImg" style="width: 100px;"></template>
+            </el-table-column>
+        </el-table>
+    </el-dialog>
 </template>
 
 <style scoped></style>

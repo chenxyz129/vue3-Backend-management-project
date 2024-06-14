@@ -2,7 +2,7 @@
 import { reqAttrInfoList, reqSaveAttrInfo, reqdeleteAttr } from "@/api/product/attr";
 import { useCategoryStore } from "@/stores/useCategoryStore"
 import { ElMessage } from "element-plus";
-import { reactive, ref, watch } from "vue";
+import { onMounted, reactive, ref, watch } from "vue";
 const CategoryStore = useCategoryStore()
 const isShowADDCard = ref(false)
 const saveAttrInfo = reactive<any>({
@@ -97,6 +97,9 @@ const delAttr = async (id: number) => {
 watch(() => CategoryStore.C3Id, () => {
     getAttrArr()
 })
+// onMounted(()=>{
+//     CategoryStore.$reset()
+// })
 </script>
 
 <template>

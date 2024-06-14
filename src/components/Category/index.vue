@@ -18,7 +18,6 @@ const getCategory3 = () => {
     CategoryStore.C3Id = "";
     CategoryStore.getC3()
 }
-
 </script>
 
 <template>

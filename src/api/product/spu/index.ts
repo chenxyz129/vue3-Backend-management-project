@@ -5,6 +5,7 @@ enum API {
   URL_getSpuInfo = "/admin/product/getSpuInfo/",
   URL_saveSpuInfo = "/admin/product/saveSpuInfo",
   URL_updateSpuInfo = "/admin/product/updateSpuInfo",
+  URL_deleteSpu ="/admin/product/deleteSpu/"
 }
 export const reqGetProduct = (
   page: number,
@@ -23,3 +24,4 @@ export const reqSaveSpuInfo = (data: any) => {
    return  request.post(API.URL_saveSpuInfo,data)
   }
 };
+export const reqDeleteSpu =(spuId:number)=>request.delete(API.URL_deleteSpu+spuId)

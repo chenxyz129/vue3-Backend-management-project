@@ -1,13 +1,15 @@
 <script setup lang="ts">
 import { reqGetSpuInfoById, reqSaveSpuInfo } from "@/api/product/spu/index"
 import { reqTrademarkList } from "@/api/product/trademark/index"
+
 import { computed, nextTick, ref } from "vue";
 import { ElMessage, type UploadRawFile } from "element-plus"
+
 const emit = defineEmits(['changeScene','getSPUList'])
 const selectedAddAttr = ref()
 const saveSpuInfo = ref()
 const AttrInput = ref()
-const spuInfo = ref({
+const spuInfo = ref<any>({
     // id: '',
     createTime: "",
     updateTime: "",
@@ -24,7 +26,7 @@ const spuInfo = ref({
 const allSpuSaleAttr = ref([{ id: 1, name: '颜色' }, { id: 2, name: "版本" }, { id: 3, name: "尺码" }])
 const unSelectSpuAttr = computed(() => {
     return allSpuSaleAttr.value.filter((item) =>
-        spuInfo.value.spuSaleAttrList.every((item1) => item1.saleAttrName != item.name)
+        spuInfo.value.spuSaleAttrList.every((item1:any) => item1.saleAttrName != item.name)
     )
 })
 const spuTradeMarklList = ref()
@@ -41,6 +43,8 @@ const getTradeMarkList = async (c3id: number | string) => {
     spuTradeMarklList.value = result.data
 
 }
+
+
 const addSaleAttrValue = (row: any) => {
     row.isEditing = true
     console.log(row);
@@ -69,7 +73,7 @@ const getSPUInfo = async (spuid: number) => {
 
     Object.assign(spuInfo.value, result.data)
 
-    imgFileList.value = spuInfo.value.spuImageList.map((item) => { return { name: item.imgName, url: item.imgUrl } })
+    imgFileList.value = spuInfo.value.spuImageList.map((item:any) => { return { name: item.imgName, url: item.imgUrl } })
 }
 const dialogVisible = ref(false)
 const dialogImageUrl = ref('')
