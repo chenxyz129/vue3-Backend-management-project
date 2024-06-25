@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import * as echarts from "echarts"
 import { onMounted, ref } from "vue";
-import china from "./china.json"
+import china  from "./china.json"
 const map = ref()
-echarts.registerMap('china', china)
+echarts.registerMap('china', china as any)
 onMounted(() => {
     const myMap = echarts.init(map.value)
     myMap.setOption({

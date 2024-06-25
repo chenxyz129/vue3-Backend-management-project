@@ -24,13 +24,13 @@ export default ({ command, mode }: ConfigEnv): UserConfigExport => {
       }),
     ],
     server: {
-      proxy:{
-        [env.VITE_APP_BASE_API]:{
-          target:env.VITE_SERVE,
-          changeOrigin:true,
-          rewrite: (path) => path.replace(/^\/api/, '')
-        }
-      }
+      proxy: {
+        [env.VITE_APP_BASE_API]: {
+          target: env.VITE_SERVE,
+          changeOrigin: true,
+          rewrite: (path) => path.replace(/^\/api/, ""),
+        },
+      },
     },
     resolve: {
       alias: {

@@ -206,10 +206,7 @@ const useUserStore = defineStore("User", {
       if (result.code == 200) {
         this.username = result.data.name;
         this.avatar = result.data.avatar;
-        const filledRoutes: any = fillRoutes(
-          cloneDeep(asyncRoutes),
-          result.data.routes
-        );
+        
       } else {
         return Promise.reject(new Error(result.message));
       }
