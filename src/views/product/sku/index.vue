@@ -1,11 +1,13 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue';
-import { reqGetSkuInfoByPage, reqSetSkuSaleOrUnsale } from "@/api/product/sku/index"
+import { reqGetSkuInfoByPage, reqSetSkuSaleOrUnsale, reqGetSkuInfoBySkuId ,reqDelSkuBySkuId} from "@/api/product/sku/index"
 import { ElMessage } from 'element-plus';
 const currentPage = ref(1)
 const pageSize = ref(10)
 const total = ref(0)
 const skuData = ref()
+const isShowDrawer = ref(false)
+const SkuDetail = ref()
 const getSKUData = async () => {
     const result: any = await reqGetSkuInfoByPage(currentPage.value, pageSize.value)
     console.log(result);
@@ -16,9 +18,7 @@ const getSKUData = async () => {
     }
 }
 const saleOrUnSale = async (row: any) => {
-    console.log(row);
-    
-    const result: any = await reqSetSkuSaleOrUnsale(row.id,row.isSale)
+    const result: any = await reqSetSkuSaleOrUnsale(row.id, row.isSale)
     if (row.isSale == 1) {
         if (result.code == 200) {
             ElMessage.success('下架成功！')
@@ -33,6 +33,23 @@ const saleOrUnSale = async (row: any) => {
         }
     }
     getSKUData()
+}
+const showSkuDetail = async (row: any) => {
+    const result: any = await reqGetSkuInfoBySkuId(row.id)
+    if (result.code == 200) {
+        SkuDetail.value = result.data
+        isShowDrawer.value = true
+    }
+    
+}
+const delSku=async (row:any)=>{
+    const result:any=await reqDelSkuBySkuId(row.id)
+    if(result.code == 200){
+        getSKUData()
+        ElMessage.success('删除成功！')
+    }else{
+        ElMessage.error('删除失败！')
+    }
 }
 onMounted(() => {
     getSKUData()
@@ -57,8 +74,8 @@ onMounted(() => {
                     <el-button type="primary" :icon="row.isSale ? 'Top' : 'Bottom'" size="small"
                         @click="saleOrUnSale(row)"></el-button>
                     <el-button type="primary" icon="Edit" size="small"></el-button>
-                    <el-button type="info" icon="InfoFilled" size="small"></el-button>
-                    <el-button type="danger" icon="Delete" size="small"></el-button>
+                    <el-button type="info" icon="InfoFilled" size="small" @click="showSkuDetail(row)"></el-button>
+                    <el-button type="danger" icon="Delete" size="small" @click="delSku(row)"></el-button>
                 </template>
             </el-table-column>
         </el-table>
@@ -66,7 +83,71 @@ onMounted(() => {
             background layout=" prev, pager, next,jumper,->, sizes, ,total" :total="total" @size-change="getSKUData"
             @current-change="getSKUData" style="margin-top: 10px;" />
     </el-card>
-    <el-drawer v-model="isShowDrawer" direction="rtl"></el-drawer>
+    <el-drawer v-model="isShowDrawer" direction="rtl">
+        <el-row>
+            <el-col :span="6">名称</el-col>
+            <el-col :span="18">{{ SkuDetail.skuName }}</el-col>
+        </el-row>
+        <el-row>
+            <el-col :span="6">描述</el-col>
+            <el-col :span="18">{{ SkuDetail.skuDesc }}</el-col>
+        </el-row>
+        <el-row>
+            <el-col :span="6">价格</el-col>
+            <el-col :span="18">{{ SkuDetail.price }}</el-col>
+        </el-row>
+        <el-row>
+            <el-col :span="6">平台属性</el-col>
+            <el-col :span="18">
+                <el-tag v-for="(item, index) in SkuDetail.skuAttrValueList " :key="index"
+                    >{{ item.attrName }}</el-tag>
+            </el-col>
+        </el-row>
+        <el-row>
+            <el-col :span="6">销售属性</el-col>
+            <el-col :span="18">
+                <el-tag v-for="item in SkuDetail.skuSaleAttrValueList"> {{ item.saleAttrName }}</el-tag>
+            </el-col>
+        </el-row>
+        <el-row>
+            <el-col :span="6">商品属性</el-col>
+            <el-col :span="18"></el-col>
+        </el-row>
+        <el-row>
+            <el-col>
+                <el-carousel :interval="4000" type="card" height="200px">
+                    <el-carousel-item v-for="item in SkuDetail.skuImageList" :key="item">
+                        <img :src="item.imgUrl" style="width: 100%;">
+                    </el-carousel-item>
+                </el-carousel>
+            </el-col>
+        </el-row>
+    </el-drawer>
 </template>
 
-<style scoped></style>
+<style scoped lang="scss">
+.el-carousel__item h3 {
+    color: #475669;
+    opacity: 0.75;
+    line-height: 200px;
+    margin: 0;
+    text-align: center;
+}
+
+.el-carousel__item:nth-child(2n) {
+    background-color: #99a9bf;
+}
+
+.el-carousel__item:nth-child(2n + 1) {
+    background-color: #d3dce6;
+}
+
+.el-drawer {
+    .el-col {
+        margin-bottom: 15px;
+        .el-tag{
+            margin: 2px 5px
+        }
+    }
+}
+</style>

@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { reactive, ref } from 'vue';
 import useUserStore from '@/stores/useUserStore';
-import type { loginForm } from '@/api/user/types';
+import type { loginFormData } from '@/api/user/types';
 import { ElNotification } from 'element-plus';
 import router from '@/router';
 import { useRoute } from 'vue-router';
@@ -11,7 +11,7 @@ let RefForm = ref()
 let Is_show_password = ref(true)
 let Is_btn_loading = ref(false)
 let UserStore = useUserStore()
-const login = async (login_form: loginForm) => {
+const login = async (login_form: loginFormData) => {
     await RefForm.value.validate()
 
     Is_btn_loading.value = true
@@ -21,7 +21,6 @@ const login = async (login_form: loginForm) => {
             message: '登录成功，' + getTime() + '好！',
             type: 'success',
         })
-
         const redirect: any = route.query.redirect
         router.push({ path: redirect || '/home' })
         Is_btn_loading.value = false
@@ -34,7 +33,7 @@ const login = async (login_form: loginForm) => {
         Is_btn_loading.value = false
     })
 }
-let getTime = () => {
+const getTime = () => {
     let time = ''
     let hour = new Date().getHours()
     if ((hour >= 0 && hour < 6) || (hour >= 18 && hour < 0)) {
@@ -61,7 +60,7 @@ const validatorPasswd = (rule: any, value: any, callback: any) => {
 }
 let login_form_rules = {
     username: [
-        { required: true, min: 3, max: 6, message: '用户名长度必须在3至6位之间！', trigger: 'change' },
+        { required: true, min: 3, max: 18, message: '用户名长度必须在3至18位之间！', trigger: 'change' },
     ],
     password: [{
         trigger: 'change', validator: validatorPasswd, message: '密码长度必须在6至18位之间！'

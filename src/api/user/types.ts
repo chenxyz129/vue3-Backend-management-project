@@ -16,6 +16,6 @@ export interface InfoResponData extends responData{
     buttons:string[],
     roles:string[],
     name:string,
-    avatar:string
+    avatar:string,
   }
 }

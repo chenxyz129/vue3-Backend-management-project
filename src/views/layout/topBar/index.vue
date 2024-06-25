@@ -3,9 +3,12 @@ import useMenuStore from '@/stores/useMenuStore';
 import useUserStore from '@/stores/useUserStore';
 import { useRoute } from 'vue-router';
 import router from '@/router';
+import { ref } from 'vue';
 const route = useRoute()
 const menuStore = useMenuStore()
 const UserStore = useUserStore()
+
+const isDark = ref(false)
 const changeCollapse = () => {
     menuStore.isMenuCollapse = !menuStore.isMenuCollapse
 }
@@ -23,7 +26,22 @@ const setScreenFull = () => {
 }
 const logout = async () => {
     await useUserStore().userLogout()
+    useUserStore().restRoutes()
     router.push({ path: '/login', query: { redirect: route.path } })
+}
+const setDark = () => {
+    const html = document.documentElement
+    isDark.value ? html.className = 'dark' : html.className = ''
+}
+const color = ref('bule')
+const setColor = () => {
+    // document.documentElement 是全局变量时
+    const el = document.documentElement
+    // const el = document.getElementById('xxx')
+    // 获取 css 变量
+    getComputedStyle(el).getPropertyValue(`--el-color-primary`)
+    // 设置 css 变量
+    el.style.setProperty('--el-color-primary', color.value)
 }
 </script>
 
@@ -35,7 +53,7 @@ const logout = async () => {
             </el-icon>
             <el-breadcrumb separator-icon="ArrowRight">
                 <template v-for="(item, index) in route.matched" :key="index">
-                    <el-breadcrumb-item v-show="!item.meta.hideBreadcrumb" :to="item.path">
+                    <el-breadcrumb-item v-if="!item.meta.hideBreadcrumb" :to="item.path">
                         <el-icon style="vertical-align: middle;">
                             <component :is="item.meta.icon"></component>
                         </el-icon>
@@ -56,11 +74,20 @@ const logout = async () => {
                     <FullScreen />
                 </el-icon>
             </el-button>
-            <el-button circle>
-                <el-icon size="small">
-                    <Setting />
-                </el-icon>
-            </el-button>
+            <el-popover trigger="hover" title="主题设置" width="200px">
+                <template #reference>
+                    <el-button circle>
+                        <el-icon size="small">
+                            <Setting />
+                        </el-icon>
+                    </el-button>
+                </template>
+                <el-form>
+                    <el-form-item label="主题颜色"><el-color-picker v-model="color" :teleported="false" @change="setColor"/></el-form-item>
+                    <el-form-item label="暗黑主题"><el-switch v-model="isDark" @change="setDark" inline-prompt
+                            active-icon="Moon" inactive-icon="Sunny" /></el-form-item>
+                </el-form>
+            </el-popover>
             <img :src="UserStore.avatar" style="width: 30px;height: 30px; margin:0 5px;border-radius: 50%">
             <el-dropdown>
                 <span class="el-dropdown-link">

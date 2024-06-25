@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { onMounted,defineProps } from 'vue';
+import { onMounted,defineProps, onUnmounted } from 'vue';
 import { useCategoryStore } from '@/stores/useCategoryStore';
 const CategoryStore = useCategoryStore()
 defineProps(['disabled'])
@@ -18,6 +18,7 @@ const getCategory3 = () => {
     CategoryStore.C3Id = "";
     CategoryStore.getC3()
 }
+
 </script>
 
 <template>

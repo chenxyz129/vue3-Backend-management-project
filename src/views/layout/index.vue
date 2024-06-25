@@ -4,7 +4,7 @@ import topBar from './topBar/index.vue'
 import useUserStore from '@/stores/useUserStore';
 import { useRoute } from 'vue-router';
 import useMenuStore from '@/stores/useMenuStore';
-import { nextTick, onMounted, ref, watch } from 'vue';
+import { nextTick, onBeforeMount, onMounted, ref, watch } from 'vue';
 const menuStore = useMenuStore()
 const menuRoutes = useUserStore().menuRoutes;
 const route = useRoute()
@@ -14,8 +14,11 @@ watch(() => menuStore.isChange, () => {
     nextTick(() => isShowDetail.value = true)
 })
 
-onMounted(() => {
+onBeforeMount(()=>{
     useUserStore().getUserInfo()
+})
+onMounted(() => {
+    
 })
 </script>
 <script lang="ts">
