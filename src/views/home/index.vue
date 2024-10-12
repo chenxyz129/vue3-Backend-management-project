@@ -1,5 +1,7 @@
 <script setup lang="ts">
+import router from "@/router";
 import useUserStore from "@/stores/useUserStore"
+import { onMounted } from "vue";
 const userStore = useUserStore()
 const getTime = () => {
     let time = ''
@@ -17,6 +19,11 @@ const getTime = () => {
     }
     return time
 }
+onMounted(()=>{
+    if(!userStore.token){
+        router.push({path:'/login'})
+    }
+})
 </script>
 
 <template>
